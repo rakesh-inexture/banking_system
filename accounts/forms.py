@@ -34,3 +34,6 @@ class UserAddressForm(forms.ModelForm):
             'country'
         ]
 
+class UserLoginForm(forms.Form):
+    account_no = forms.IntegerField(label="Account Number")
+    password = forms.CharField(widget=forms.PasswordInput)
