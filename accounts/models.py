@@ -1,37 +1,37 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.db import models
-from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
+
 
 class User(AbstractUser):
     username = models.CharField(
-        _('username'), max_length=30, unique=True, null=True, blank=True,
-        help_text=_(
+        ('username'), max_length=30, unique=True, null=True, blank=True,
+        help_text=(
             'Required. 30 characters or fewer. Letters, digits and '
             '@/./+/-/_ only.'
         ),
         validators=[
             RegexValidator(
                 r'^[\w.@+-]+$',
-                _('Enter a valid username. '
+                ('Enter a valid username. '
                     'This value may contain only letters, numbers '
                     'and @/./+/-/_ characters.'), 'invalid'),
         ],
         error_messages={
-            'unique': _("A user with that username already exists."),
+            'unique': ("A user with that username already exists."),
         })
 
     email = models.EmailField(unique=True, null=False, blank=False)
     contact_no = models.IntegerField(unique=True, blank=True, null=True)
-
-    # objects = UserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email
+
+    # here decorator does,is declare that it can be accessed like it's a regular property.
+    # here hasattr() checking for the existence of an attribute and returning.........
 
     @property
     def account_no(self):
