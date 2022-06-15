@@ -1,28 +1,30 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.db import models
-
+from django.utils.translation import gettext_lazy as _
 
 class User(AbstractUser):
     username = models.CharField(
-        ('username'), max_length=30, unique=True, null=True, blank=True,
-        help_text=(
+        _('username'), max_length=30, unique=True, null=True, blank=True,
+        help_text=_(
             'Required. 30 characters or fewer. Letters, digits and '
             '@/./+/-/_ only.'
         ),
         validators=[
             RegexValidator(
                 r'^[\w.@+-]+$',
-                ('Enter a valid username. '
+                _('Enter a valid username. '
                     'This value may contain only letters, numbers '
                     'and @/./+/-/_ characters.'), 'invalid'),
         ],
         error_messages={
-            'unique': ("A user with that username already exists."),
+            'unique': _("A user with that username already exists."),
         })
 
     email = models.EmailField(unique=True, null=False, blank=False)
     contact_no = models.IntegerField(unique=True, blank=True, null=True)
+
+    # objects = UserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -30,12 +32,13 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
-    # here decorator does,is declare that it can be accessed like it's a regular property.
-    # here hasattr() checking for the existence of an attribute and returning.........
-
     @property
+    # It is a built-in decorator it  help in defining the properties effortlessly without manually calling the inbuilt function property().
+    # It return the property attributes of a class from the stated getter, setter and deleter as parameters.
+
     def account_no(self):
         if hasattr(self, 'account'):
+            # here hasattr() checking for the existence of an attribute, if TRUE then returning it.
             return self.account.account_no
         return None
 
@@ -59,7 +62,6 @@ class User(AbstractUser):
                 self.address.country,
             )
         return None
-
 
 class AccountDetails(models.Model):
     GENDER_CHOICE = (
