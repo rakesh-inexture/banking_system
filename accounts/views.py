@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
 from .forms import UserRegistrationForm, AccountDetailsForm, UserAddressForm, UserLoginForm
 
-# here creating a register form with register_view function.
+
 def register_view(request):
-    # it will create fields like [Name, email, contact pass]
+    # here creating a register form with register_view function.
     user_form = UserRegistrationForm(request.POST or None,)
-    # it wll create  fields like []
+    # it will create fields like [Name, email, contact pass]
     account_form = AccountDetailsForm(request.POST or None, request.FILES or None)
 
     address_form = UserAddressForm(request.POST or None)

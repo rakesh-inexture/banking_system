@@ -37,3 +37,6 @@ class UserAddressForm(forms.ModelForm):
 class UserLoginForm(forms.Form):
     account_no = forms.IntegerField(label="Account Number")
     password = forms.CharField(widget=forms.PasswordInput)
+class UserLoginForm(forms.Form):
+    account_no = forms.IntegerField(label="Account Number")
+    password = forms.CharField(widget=forms.PasswordInput)
