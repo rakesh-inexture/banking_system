@@ -57,6 +57,8 @@ MIDDLEWARE = [
 
 AUTH_USER_MODEL = 'accounts.User'
 
+LOGIN_URL = "/accounts/login/"
+
 ROOT_URLCONF = 'banking_system.urls'
 
 TEMPLATES = [
@@ -144,3 +146,9 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'accounts.backends.AccountNoBackend',
+)
