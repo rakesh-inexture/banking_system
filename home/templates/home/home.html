@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %} {{ block.super }}{% endblock title %}
+{% block title %} {{ block.super }}{{request.user.is_authenticated}}{% endblock title %}
 
 {% block content %}
 <div class="container" style="padding-top: 50px;">
