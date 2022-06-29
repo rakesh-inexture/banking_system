@@ -3,12 +3,27 @@
 {% block title %} {{ title }} | {{ block.super }}{% endblock title %}
 
 {% block content %}
-{% include "home/messages.html" %}
-<h2>{{ title }}</h2><hr>
-<form method="POST" action="" enctype='multipart/form-data'>
-    {% csrf_token %}
-    {{ form|crispy }}
-    <br>
-    <input class="btn btn-success" type="submit" value='Submit'>
-</form>
+<div class="content-section">
+    {% include "home/messages.html" %}
+    <h2>{{ title }}</h2><hr>
+    <form method="POST" action="" enctype='multipart/form-data'>
+        {% csrf_token %}
+        {{ form|crispy }}
+        <br>
+        <div class="form-group">
+            <input class="btn btn-success" type="submit" value='Login'>
+            <small class="text-muted ml-2">
+                <a href="{% url 'password_reset' %}"><b>Forgot Password?</b></a>
+            </small>
+            <br>
+            <div class="border-top pt-3">
+                <small class="text-muted ml-2">
+                    <b>You have not an Account?</b><a class="ml-2" href="{% url 'register' %}">Open An Account</a>
+                </small>
+            </div>
+        </div>
+
+    </form>
+
+</div>
 {% endblock content %}

@@ -1,16 +1,17 @@
 from django.shortcuts import render
+from django.views import View
+from accounts.models import AccountDetails
 
-def home_view(request):
-    if not request.user.is_authenticated:
-        return render(request, "home/home.html")
-    else:
-        user = request.user
+class HomeView(View):
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return render(request, "home/home.html")
+        else:
+            profile = AccountDetails.objects.get(user_id=request.user.id)
+            print(profile)
+            return render(request, "home/transactions.html", {"profile": profile})
 
-        context = {
-            "user": user,
-        }
-        return render(request, "home/transactions.html", context)
-
-def about(request):
-    return render(request, "home/about.html", {})
+class About(View):
+    def get(self, request):
+        return render(request, "home/about.html", {})
 

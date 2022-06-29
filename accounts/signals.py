@@ -11,9 +11,7 @@ def create_account_no(sender, instance, *args, **kwargs):
     # checks if user has an account number and user is not staff or superuser
     if not instance.account_no and not (instance.user.is_staff or instance.user.is_superuser):
         # gets the largest account number
-        largest = AccountDetails.objects.all().aggregate(
-            Max("account_no")
-            )['account_no__max']
+        largest = AccountDetails.objects.all().aggregate(Max("account_no"))['account_no__max']
 
         if largest:
             # creates new account number

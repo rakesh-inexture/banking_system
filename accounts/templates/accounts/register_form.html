@@ -4,13 +4,49 @@
 
 {% block content %}
 {% include "home/messages.html" %}
-<h2>{{ title }}</h2><hr>
-<form method="POST" action="" enctype='multipart/form-data'>
-    {% csrf_token %}
-    {{ user_form|crispy }}
-    {{ account_form|crispy }}
-    {{ address_form|crispy }}
-    <br>
-    <input class="btn btn-success" type="submit" value='Submit'>
-</form>
+    <h2>{{ title }}</h2><hr>
+    <form method="POST" action="" id= "registerForm" data-districts-url="{% url 'ajax_load_districts' %}" novalidate enctype='multipart/form-data'>
+        {% csrf_token %}
+        <table>
+            {{ user_form|crispy }}
+            {{ account_form|crispy }}
+            {{ address_form|crispy }}
+        </table>
+        <br>
+        <input class="btn btn-success" type="submit" value='Open an Account'>
+        <small class="text-muted">
+            <b>You have already an Account?</b><a class="ml-2" href="{% url 'login' %}">Login An Account</a>
+        </small>
+    </form>
 {% endblock content %}
+
+{% block script_content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script>
+    $("#id_state").change(function () {
+        var url = $("#registerForm").attr("data-districts-url");  // get the url of the `load_districts` view
+        // console.log(url)
+        var stateId = $(this).val();  // get the selected state ID from the HTML input
+        $.ajax({                       // initialize an AJAX request
+            url: url,                   // set the url of the request (= localhost:8000/accounts/ajax/load-districts/)
+            method:"GET",
+            data: {
+                'state': stateId       // add the state id to the GET parameters
+            },
+            success: function (data) {   // `data` is the return of the `load_districts` view function
+                var res_data = JSON.parse(data);
+                // console.log(res_data);
+                $('#id_district').empty();
+                $.each(res_data, function(key, value) {
+                    $('#id_district')
+                         .append($("<option></option>")
+                                    .attr("value", key)
+                                    .text(value));
+                });
+                // $("#id_district").html(data);  // replace the contents of the city input with the data that came from the server
+            }
+        });
+    });
+</script>
+{% endblock script_content %}
+

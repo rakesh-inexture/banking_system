@@ -1,15 +1,14 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+# import secrets
 # from secrets import SystemRandom
 
 
 class User(AbstractUser):
     username = models.CharField(max_length=50)
-
     email = models.EmailField(unique=True, null=False, blank=False)
     contact_no = models.CharField(max_length=12, unique=True, null=True)
-
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
@@ -41,9 +40,9 @@ class User(AbstractUser):
         if hasattr(self, 'address'):
             return '{}, {}-{}, {}'.format(
                 self.address.street_address,
-                self.address.city,
+                self.address.district,
                 self.address.postal_code,
-                self.address.country,
+                self.address.state,
             )
         return None
 
@@ -62,6 +61,7 @@ class AccountDetails(models.Model):
         ("SCI", "Science City")
     )
     user = models.OneToOneField(User, related_name='account', on_delete=models.CASCADE)
+
     account_no = models.PositiveIntegerField(
         unique=True,
         validators=[
@@ -69,23 +69,41 @@ class AccountDetails(models.Model):
             MaxValueValidator(99999999)
         ]
     )
+    # hexstr = secrets.token_hex(3)
+    # account_no = models.CharField(int(hexstr, 16),)
+
     gender = models.CharField(max_length=1, choices=GENDER_CHOICE)
     branch_name = models.CharField(max_length=3, choices=BRANCH_CHOICE)
     account_type = models.CharField(max_length=1, null=False, blank=False, choices=ACCOUNT_CHOICE)
     birth_date = models.DateField(null=True, blank=True, help_text="Date format must be YYYY-MM-DD")
     balance = models.DecimalField(
-        default=0,
+        default=1000,
         max_digits=12,
         decimal_places=2
     )
     picture = models.ImageField(
-        null=True,
-        blank=True,
-        upload_to='account_pictures/',
+        null=False,
+        blank=False,
+        upload_to='profile/',
+        default='profile/dummy-image.jpg'
     )
 
     def __str__(self):
         return str(self.account_no)
+
+
+class State(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+class District(models.Model):
+    state = models.ForeignKey(State, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
 
 
 class UserAddress(models.Model):
@@ -95,9 +113,9 @@ class UserAddress(models.Model):
         on_delete=models.CASCADE,
     )
     street_address = models.CharField(max_length=512)
-    city = models.CharField(max_length=256)
     postal_code = models.CharField(max_length=6)
-    country = models.CharField(max_length=256)
+    state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True)
+    district = models.ForeignKey(District, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return self.user.email
