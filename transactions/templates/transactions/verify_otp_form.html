@@ -1,0 +1,18 @@
+{% extends "home/base.html" %}
+{% load crispy_forms_tags %}
+{% block title %} {{ title }} | {{ block.super }}{% endblock title %}
+
+{% block content %}
+{% include "home/messages.html" %}
+<!--<div class="alert alert-info" role="alert"><h4>Your Current Account Balance is ₹ {{ request.user.balance }}</h4></div>-->
+
+<h2>Enter OTP</h2><hr>
+<form method="POST" action="{% url 'transactions:withdrawal' %}" enctype='multipart/form-data' >
+    {% csrf_token %}
+    {{ otp_form|crispy }}
+    <br>
+    <input class="btn btn-primary" type="submit" value='Verify OTP'>
+</form>
+
+{% endblock content %}
+

@@ -1,0 +1,45 @@
+{% extends "home/base.html" %}
+{% load crispy_forms_tags %}
+{% block title %} {{ title }} | {{ block.super }}{% endblock title %}
+
+{% block content %}
+{% include "home/messages.html" %}
+<div class="alert alert-info" role="alert"><h4>Your Current Account Balance is ₹ {{ request.user.balance }}</h4></div>
+    <h2>Withdrawn Amount</h2><hr>
+    <form method="POST" action="" id="id_form">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <br>
+        <input class="btn btn-primary" id="id_submit" type="button" value='Withdraw'>
+    </form>
+
+{% endblock content %}
+{% block script_content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script>
+    $("$id_submit").on('click', function(){
+        let amount= $("$id_amount").val();
+        if(amount<10)
+        {
+            alert("You cannot withdraw amount less than 10.")
+        }
+        $.ajax({
+            type: 'POST',
+            url: '{% url "transactions:otp_auth" %}',
+            method: "POST",
+            data: {
+               user: request.user,
+               csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data){
+                if(data.status == "True"){
+                    // Submit form
+                }
+                else if(data.status=="False"){
+                    // Refresh Form
+                }
+            }
+        });
+    });
+</script>
+{% endblock script_content %}

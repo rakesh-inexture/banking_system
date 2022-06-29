@@ -1,0 +1,20 @@
+[
+{
+  "model": "accounts.state",
+  "fields": {
+    "name": "Gujarat"
+  }
+},
+{
+  "model": "accounts.state",
+  "fields": {
+    "name": "Bihar"
+  }
+},
+{
+  "model": "accounts.state",
+  "fields": {
+    "name": "Delhi"
+  }
+}
+]
