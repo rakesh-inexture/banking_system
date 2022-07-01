@@ -48,8 +48,8 @@ class WithdrawalOtp(models.Model):
         related_name='otpauth',
         on_delete=models.CASCADE,
     )
-    otp = models.IntegerField()
+    otp = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return str(self.user)
+        return f"{str(self.user)}: {self.otp}"
 

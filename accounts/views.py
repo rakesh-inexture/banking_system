@@ -55,8 +55,14 @@ class RegisterView(View):
                 Your Account Number is {}, Please use this number to login
                 '''.format(new_user.full_name, new_user.account_no))
             return redirect("home:home_view")
-        return HttpResponse(request, 'accounts/register')
 
+        context = {
+            "title": "Create a Bank Account",
+            "user_form": user_form,
+            "account_form": account_form,
+            "address_form": address_form,
+        }
+        return render(request, "accounts/register_form.html", context)
 
 class LoadDistricts(View):
     def get(self, request):
@@ -68,7 +74,6 @@ class LoadDistricts(View):
         # filtered_districts = dict()
         filtered_districts = {district.id: district.name for district in districts}
         return HttpResponse(json.dumps(filtered_districts))
-
 
 class LoginView(View):
     def get(self, request):

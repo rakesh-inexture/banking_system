@@ -4,10 +4,11 @@ from django.db import models
 # import secrets
 # from secrets import SystemRandom
 
-
 class User(AbstractUser):
     username = models.CharField(max_length=50)
-    email = models.EmailField(unique=True, null=False, blank=False)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    email = models.EmailField(unique=True)
     contact_no = models.CharField(max_length=12, unique=True, null=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -104,6 +105,7 @@ class District(models.Model):
 
     def __str__(self):
         return self.name
+
 
 
 class UserAddress(models.Model):

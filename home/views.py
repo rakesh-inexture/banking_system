@@ -8,7 +8,6 @@ class HomeView(View):
             return render(request, "home/home.html")
         else:
             profile = AccountDetails.objects.get(user_id=request.user.id)
-            print(profile)
             return render(request, "home/transactions.html", {"profile": profile})
 
 class About(View):
