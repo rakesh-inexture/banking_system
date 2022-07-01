@@ -1,9 +1,7 @@
 from django.db.models import Max
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-
 from .models import User, AccountDetails
-
 
 @receiver(pre_save, sender=AccountDetails)
 # pre_save-> This is sent at the beginning of a model's save() method.

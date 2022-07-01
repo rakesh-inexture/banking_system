@@ -1,15 +1,17 @@
 from django.urls import path
-from accounts import views
+from .views import RegisterView, LoginView, UserUpdateView, UserAccountUpdateView, UserAddressUpdateView, LoadDistricts, ProfileView
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
-    path('register/', views.RegisterView.as_view(), name='register'),
-    path('login/', views.LoginView.as_view(), name='login'),
+    path('register/', RegisterView.as_view(), name='register'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('user_profile', login_required(ProfileView.as_view()), name='user_profile'),
     path('logout/', auth_views.LogoutView.as_view(template_name='home/home.html'), name='logout'),
-    path('user_update/<int:pk>/', views.UserUpdateView.as_view(), name='user_update'),
-    path('account_update/<int:pk>/', views.UserAccountUpdateView.as_view(), name='account_update'),
-    path('address_update/<int:pk>/', views.UserAddressUpdateView.as_view(), name='address_update'),
-    path('ajax/load-districts/', views.LoadDistricts.as_view(), name='ajax_load_districts'),
+    path('user_update/<int:pk>/', UserUpdateView.as_view(), name='user_update'),
+    path('account_update/<int:pk>/', UserAccountUpdateView.as_view(), name='account_update'),
+    path('address_update/<int:pk>/', UserAddressUpdateView.as_view(), name='address_update'),
+    path('ajax/load-districts/', LoadDistricts.as_view(), name='ajax_load_districts'),
 
     path('password-reset/',
          auth_views.PasswordResetView.as_view(

@@ -21,12 +21,11 @@
 {% endblock content %}
 
 {% block script_content %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 <script>
     $("#id_state").change(function () {
-        var url = $("#registerForm").attr("data-districts-url");  // get the url of the `load_districts` view
+        let url = $("#registerForm").attr("data-districts-url");  // get the url of the `load_districts` view
         // console.log(url)
-        var stateId = $(this).val();  // get the selected state ID from the HTML input
+        let stateId = $(this).val();  // get the selected state ID from the HTML input
         $.ajax({                       // initialize an AJAX request
             url: url,                   // set the url of the request (= localhost:8000/accounts/ajax/load-districts/)
             method:"GET",
@@ -34,7 +33,7 @@
                 'state': stateId       // add the state id to the GET parameters
             },
             success: function (data) {   // `data` is the return of the `load_districts` view function
-                var res_data = JSON.parse(data);
+                let res_data = JSON.parse(data);
                 // console.log(res_data);
                 $('#id_district').empty();
                 $.each(res_data, function(key, value) {

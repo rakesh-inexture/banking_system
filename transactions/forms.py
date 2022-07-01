@@ -22,8 +22,3 @@ class WithdrawalForm(forms.ModelForm):
         if self.user.account.balance < amount:
             raise forms.ValidationError('You Can Not Withdraw More Than You Balance.')
         return amount
-
-class OtpForm(forms.Form):
-    class Meta:
-        model = WithdrawalOtp()
-        fields = ["otp"]

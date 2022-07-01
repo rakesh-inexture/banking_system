@@ -7,6 +7,7 @@ class UserRegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = [
+            "username",
             "first_name",
             "last_name",
             "email",
@@ -37,7 +38,7 @@ class UserAddressForm(forms.ModelForm):
         ]
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-            # self.fields['district'].queryset = District.objects.none()
+            self.fields['district'].queryset = District.objects.none()
 
             # if 'state' in self.data:
             #     try:
@@ -66,4 +67,3 @@ class UserLoginForm(forms.Form):
                 raise forms.ValidationError("Account is not Active.")
 
         return super(UserLoginForm, self).clean(*args, **kwargs)
-

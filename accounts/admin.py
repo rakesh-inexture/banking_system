@@ -1,7 +1,39 @@
 from django.contrib import admin
-from .models import User, AccountDetails, UserAddress
+from .models import User, AccountDetails, UserAddress,State, District
 
-admin.site.register(User)
-admin.site.register(AccountDetails)
-admin.site.register(UserAddress)
+@admin.register(User)
+class UserModelAdmin(admin.ModelAdmin):
+    list_display = [
+            "username",
+            "full_name",
+            "email",
+            "contact_no",
+        ]
+
+@admin.register(AccountDetails)
+class AccountModelAdmin(admin.ModelAdmin):
+    list_display = [
+            'branch_name',
+            'account_type',
+            'gender',
+            'birth_date',
+            'picture'
+        ]
+
+@admin.register(UserAddress)
+class AddressModelAdmin(admin.ModelAdmin):
+    list_display = [
+            'state',
+            'district',
+            'street_address',
+            'postal_code',
+        ]
+
+@admin.register(State)
+class StateModelAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name']
+
+@admin.register(District)
+class DistrictModelAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'state_id']
 
