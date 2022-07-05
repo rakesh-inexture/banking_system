@@ -67,4 +67,3 @@ class UserLoginForm(forms.Form):
                 raise forms.ValidationError("Account is not Active.")
 
         return super(UserLoginForm, self).clean(*args, **kwargs)
-

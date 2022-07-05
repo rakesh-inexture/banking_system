@@ -1,16 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from accounts.models import AccountDetails
 
 class HomeView(View):
     def get(self, request):
-        if not request.user.is_authenticated:
-            return render(request, "home/home.html")
-        else:
-            profile = AccountDetails.objects.get(user_id=request.user.id)
-            return render(request, "home/transactions.html", {"profile": profile})
+        return render(request, "home/home.html", {})
 
 class About(View):
     def get(self, request):
         return render(request, "home/about.html", {})
-

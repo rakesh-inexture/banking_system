@@ -3,24 +3,29 @@
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="{% url 'home:home_view' %}">Home</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'transactions:deposit' %}">Deposit</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'transactions:withdrawal' %}">Withdraw</a>
-      </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">Transactions</a>
+        <li class="nav-item active">
+            <a class="nav-link" href="{% url 'home:home_view' %}">Home</a>
         </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'home:about' %}">About Us</a>
-      </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="{% url 'user_profile' %}">Your Profile</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'transactions:deposit' %}">Deposit</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'transactions:withdrawal' %}">Withdraw</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'transactions:transaction_details' %}">Transactions</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'transactions:interest_details' %}">Interest</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'home:about' %}">About Us</a>
+        </li>
     </ul>
     <form class="form-inline my-2 my-lg-0">
         {% if request.user.is_authenticated %}
@@ -29,7 +34,6 @@
             <a href="{% url 'login' %}" class="btn btn-success btn-sm" type="button">Login Account</a> ||
             <a href="{% url 'register' %}" class="btn btn-primary btn-sm" type="button">Create an Account</a>
         {% endif %}
-
     </form>
   </div>
 </nav>

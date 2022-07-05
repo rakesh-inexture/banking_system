@@ -5,7 +5,7 @@
 {% block content %}
 {% include "home/messages.html" %}
 <!--<div class="alert alert-info" role="alert"><h4>Your Current Account Balance is ₹ {{ request.user.balance }}</h4></div>-->
-    <h2>Withdrawn Amount</h2><hr>
+    <h2>Withdraw Amount</h2><hr>
     <form method="POST" action="{% url 'transactions:otp_auth' %}">
         {% csrf_token %}
         {{ form|crispy }}

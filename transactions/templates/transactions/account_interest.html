@@ -1,0 +1,52 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block title %} Transactions details | {{ block.super }}{% endblock title %}
+
+{% block content %}
+<div class="page-header">
+    <h2 class="text-center"><b>Interest Details</b></h2>
+</div>
+
+{% include "home/messages.html" %}
+
+<div class="row">
+  <div class="col-xs-12 col-md-8 text-left">
+    <h4><b>Account Name: </b>{{ user.full_name }}</h4>
+    <h4><b>Account No: </b>{{ user.account_no }}</h4><br><br>
+  </div>
+  <div class="col-xs-6 col-md-4 text-left">
+    <div class="well">
+    <h4 class="card"><b>Account Balance: </b>₹{{ user.balance }}</h4>
+    <a class="btn btn-success" href="{% url 'transactions:deposit' %}">Deposit</a>
+    <a class="btn btn-danger" href="{% url 'transactions:withdrawal' %}">Withdraw</a>
+    </div>
+  </div>
+</div>
+<hr>
+<h3>Interest Details</h3>
+<table class="table table-hover table-bordered">
+  <thead>
+    <tr>
+      <th>Sr.no</th>
+      <th>Date / Time</th>
+      <th>Details</th>
+      <th>Amount (₹)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+    {% for obj in interest %}
+      <th scope="row">{{forloop.counter}}</th>
+      <td>{{ obj.timestamp }}</td>
+      <td>Interest</td>
+      <td>{{ obj.amount }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <th class="text-right" scope="row" colspan="3">Total</th>
+      <td>{{ interest_sum }}</td>
+    </tr>
+  </tbody>
+</table>
+<hr>
+{% endblock content %}
