@@ -75,6 +75,7 @@ class AccountDetails(models.Model):
 
     gender = models.CharField(max_length=1, choices=GENDER_CHOICE)
     branch_name = models.CharField(max_length=3, choices=BRANCH_CHOICE)
+    ifsc_code = models.CharField(max_length=30, default='RK012345')
     account_type = models.CharField(max_length=1, null=False, blank=False, choices=ACCOUNT_CHOICE)
     birth_date = models.DateField(null=True, blank=True, help_text="Date format must be YYYY-MM-DD")
     balance = models.DecimalField(

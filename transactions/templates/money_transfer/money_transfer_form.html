@@ -1,0 +1,61 @@
+{% extends "home/base.html" %}
+{% load crispy_forms_tags %}
+{% block title %} {{ title }} | {{ block.super }}{% endblock title %}
+
+{% block content %}
+{% include "home/messages.html" %}
+    <h2>Enter Payee Details</h2><hr>
+    <form method="post" id="mappingForm" novalidate>
+          {% csrf_token %}
+          <table>
+              <tr>
+                 <th>Select Payee Accounts  and IFSC code : </th>
+                 <td>
+                     <select id="payee_id" name="payee_id" class="payee-dropdown" style="width:500px;">
+                        {% for pl in payee_list %}
+                         <option value="{{ pl.id }}">Account_No:- {{ pl.payee_account }} IFSC: - {{ pl.payee_ifsc }}</option>
+                        {% endfor %}
+                     </select>
+                 </td>
+              </tr>
+          </table>
+          <hr>
+          <input class="btn btn-primary" id="id_proceed" name="payee_id"  type="button" value='Proceed'>
+        <div class="border-top pt-3">
+            <small class="text-muted ml-2">
+                <b>If Payee is not Added already?</b><a class="ml-2" href="{% url 'transactions:add_payee' %}">Click here</a>
+            </small>
+        </div>
+        <div class="form-group amt_wrapper" style="display:none">
+            <br/>
+            <label for="pay_mode">Choose a payment mode:</label>
+                <select name="mode" id="mode">
+                      <option value="1"> IMPS </option>
+                      <option value="2"> NEFT </option>
+                </select>
+            <br/>
+            <br/>
+            <label for="amt">Enter Amount</label>
+            <input type="number" class="form-control" name="send_amt" id="id_amt" placeholder="Enter Amount">
+            <hr>
+            <button type="button" id="id_send"  class="btn btn-primary">Send</button>
+        </div>
+    </form>
+{% endblock content %}
+
+{% block script_content %}
+<script>
+    $("#id_proceed").on('click', function() {
+        $(".amt_wrapper").css("display", "block")
+    });
+    $("#id_send").on('click', function() {
+         let amt = $("#id_amt").val();
+         if (amt<100) {
+             alert("You cannot send amount less than 100.")
+         }
+         else{
+             document.getElementById("mappingForm").submit();
+         }
+    });
+</script>
+{% endblock script_content %}

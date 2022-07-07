@@ -1,8 +1,7 @@
 from django import forms
-from .models import Deposit, Withdrawal, WithdrawalOtp
+from .models import Deposit, Withdrawal, PayeeDetails
 
 class DepositForm(forms.ModelForm):
-
     class Meta:
         model = Deposit
         fields = ["amount"]
