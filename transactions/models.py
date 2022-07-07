@@ -72,3 +72,16 @@ class Interest(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+class PayeeDetails(models.Model):
+    user = models.ForeignKey(
+        User,
+        related_name='payee',
+        on_delete=models.CASCADE,
+    )
+    payee_account = models.CharField(max_length=20)
+    payee_ifsc = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.payee_account
+

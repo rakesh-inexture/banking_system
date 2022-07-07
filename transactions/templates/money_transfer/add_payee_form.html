@@ -1,0 +1,30 @@
+{% extends "home/base.html" %}
+{% load crispy_forms_tags %}
+{% block title %} {{ title }} | {{ block.super }}{% endblock title %}
+
+{% block content %}
+{% include "home/messages.html" %}
+<h2>Add New Payee</h2><hr>
+    <form method="POST" action="" >
+        {% csrf_token %}
+        <table>
+              <tr>
+                 <th>Select Payee Accounts  and IFSC code : </th>
+                 <td>
+                     <select id="list_id" name="ac_id" class="payee-dropdown" style="width:500px;">
+                        {% for al in account_list %}
+                         <option value="{{ al.id }}" name="val_details">Account_No:- {{ al.account_no }} IFSC: - {{ al.ifsc_code }}</option>
+                        {% endfor %}
+                     </select>
+                 </td>
+              </tr>
+        </table>
+        <br>
+        <input class="btn btn-primary" type="submit" value='Add'>
+        <div class="border-top pt-3">
+                <small class="text-muted ml-2">
+                    <b>If Payee is Added already?</b><a class="ml-2" href="{% url 'transactions:money_transfer' %}">Click here</a>
+                </small>
+        </div>
+    </form>
+{% endblock content %}
