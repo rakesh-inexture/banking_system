@@ -103,12 +103,7 @@ class ProfileView(View):
             return render(request, "home/home.html")
         else:
             user = request.user
-            profile = AccountDetails.objects.get(user_id=user)
-            context = {
-                "user": user,
-                "profile": profile,
-            }
-            return render(request, "accounts/account_info.html", context)
+            return render(request, "accounts/account_info.html", {"user": user})
 
 # From here Updating all the fields related to account details......................
 class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
