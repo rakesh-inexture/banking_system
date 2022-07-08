@@ -5,55 +5,65 @@
 {% block content %}
 {% include "home/messages.html" %}
 <!--<div class="alert alert-info" role="alert"><h4>Your Current Account Balance is ₹ {{ request.user.balance }}</h4></div>-->
-    <h2>Withdraw Amount</h2><hr>
-    <form method="POST" action="{% url 'transactions:otp_auth' %}">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <input type="hidden" name="user" value="{{request.user}}">
-        <input type="hidden" name="user_id" value="{{request.user.id}}">
-        <input class="btn btn-primary" id="withdraw" type="button" value='Withdraw'>
+<h2>Withdraw Amount</h2>
+<hr>
+<form method="POST" id="mappingForm">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input class="btn btn-primary" id="withdraw" type="button" value='Withdraw'>
+    <br/>
+    <div class="form-group" id="id_otp" style="display:none">
         <br/>
-        <div class="form-group otp_wrapper" style="display:none">
-            <br/>
-            <label for="otp">Enter Sent OTP on Email</label>
-            <input type="text" class="form-control" name="otp" placeholder="Enter otp">
-            <small id="otpHelp" class="form-text text-muted">We'll never share your otp with anyone else.</small>
-            <button type="submit" id="id_submit" class="btn btn-primary">Submit</button>
-        </div>
-    </form>
+        <label for="otp">Enter Sent OTP on Email</label>
+        <input type="number" class="form-control" name="otp" id="otp" placeholder="Enter otp">
+        <small id="otpHelp" class="form-text text-muted">We'll never share your otp with anyone else.</small>
+        <button type="button" id="id_submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
 {% endblock content %}
 
 {% block script_content %}
 <script>
-    $("#withdraw").on('click', function() {
+    $("#withdraw").on('click', function () {
         let amount = $("#id_amount").val();
-        let user = $('[name=user]').val();
-        let user_id = $('[name=user_id]').val();
-        let otp = $(".otp_wrapper")
-        // console.log(amount)
-        // console.log(user)
-        // console.log(user_id)
+        // let otp = $(".otp_wrapper")
         if (amount < 10) {
             alert("You cannot withdraw amount less than 10.")
-        }
-        else {
-            console.log({ user })
+        } else {
             $.ajax({
                 url: '{% url "transactions:send_otp" %}',
-                method: "POST",
+                method: "GET",
                 data: {
-                    "user": user,
-                    "user_id": user_id,
-                    "amount": amount,
                     csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
                 },
                 success: function (status) {
-                    // console.log(status, otp)
-                    // otp.css("display", "block")
+                    // console.log(status)
                 }
             });
-            // console.log(otp)
-            otp.css("display", "block")
+            $("#id_otp").css("display", "block")
+        }
+    });
+    $("#id_submit").on('click', function () {
+        let otp = $("#otp").val();
+        if (otp == null || !otp.isInteger ) {
+            alert("Otp must be positive number and not null .")
+        } else {
+            $.ajax({
+                url: '{% url "transactions:check_otp" %}',
+                method: "GET",
+                data: {
+                    'otp': otp,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function (status) {
+                    console.log(status)
+                    if (status == '1') {
+                        document.getElementById("mappingForm").submit();
+                    } else {
+                        alert("OTP is not matching! Please Enter Correct OTP")
+                    }
+                }
+            });
         }
     });
 </script>

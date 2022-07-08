@@ -11,7 +11,7 @@
               <tr>
                  <th>Select Payee Accounts  and IFSC code : </th>
                  <td>
-                     <select id="payee_id" name="payee_id" class="payee-dropdown" style="width:500px;">
+                     <select id="payee_id" name="payee_id" class="payee-dropdown" style="width:400px;">
                         {% for pl in payee_list %}
                          <option value="{{ pl.id }}">Account_No:- {{ pl.payee_account }} IFSC: - {{ pl.payee_ifsc }}</option>
                         {% endfor %}
@@ -26,9 +26,9 @@
                 <b>If Payee is not Added already?</b><a class="ml-2" href="{% url 'transactions:add_payee' %}">Click here</a>
             </small>
         </div>
-        <div class="form-group amt_wrapper" style="display:none">
+        <div class="form-group" id="id_money" style="display:none">
             <br/>
-            <label for="pay_mode">Choose a payment mode:</label>
+            <label for="mode">Choose a payment mode:</label>
                 <select name="mode" id="mode">
                       <option value="1"> IMPS </option>
                       <option value="2"> NEFT </option>
@@ -36,9 +36,16 @@
             <br/>
             <br/>
             <label for="amt">Enter Amount</label>
-            <input type="number" class="form-control" name="send_amt" id="id_amt" placeholder="Enter Amount">
+            <input type="number" class="form-control" name="send_amt" id="id_amt" placeholder="Enter Amount" style="width:300px;">
             <hr>
             <button type="button" id="id_send"  class="btn btn-primary">Send</button>
+        </div>
+        <div class="form-group" id="otp_form"  style="display:none">
+            <br/>
+            <label for="otp_form">Enter Sent OTP on Email</label>
+            <input type="number" class="form-control" name="otp" id="otp" placeholder="Enter otp" style="width:300px;">
+            <small id="otpHelp" class="form-text text-muted">We'll never share your otp with anyone else.</small>
+            <button type="button" id="id_submit" class="btn btn-primary">Submit</button>
         </div>
     </form>
 {% endblock content %}
@@ -46,16 +53,58 @@
 {% block script_content %}
 <script>
     $("#id_proceed").on('click', function() {
-        $(".amt_wrapper").css("display", "block")
+        let selected_id = $("#payee_id").val();
+        if (selected_id == null) {
+            alert("Please Select Payee First!")
+        }
+        else{
+            $("#id_money").css("display", "block")
+        }
     });
     $("#id_send").on('click', function() {
          let amt = $("#id_amt").val();
+         // let otp = $(".otp_wrapper")
          if (amt<100) {
              alert("You cannot send amount less than 100.")
          }
          else{
-             document.getElementById("mappingForm").submit();
+             $.ajax({
+                 url: '{% url "transactions:send_otp" %}',
+                 method: "GET",
+                 data: {
+                     csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                 },
+                 success: function (status) {
+                    // console.log(status)
+                 }
+             });
+              $("#otp_form").css("display", "block")
          }
     });
+     $("#id_submit").on('click', function() {
+         let otp = $("#otp").val();
+         if (otp == null) {
+             alert("Please Enter OTP First.")
+         }
+         else {
+             $.ajax({
+                url: '{% url "transactions:check_otp" %}',
+                method: "GET",
+                data: {
+                    'otp':otp,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function (status) {
+                    console.log(status)
+                    if (status== '1'){
+                        document.getElementById("mappingForm").submit();
+                    }
+                    else {
+                        alert("OTP is not matching! Please Enter Correct OTP")
+                    }
+                }
+            });
+         }
+     });
 </script>
 {% endblock script_content %}

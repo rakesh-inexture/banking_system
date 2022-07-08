@@ -20,7 +20,6 @@ def count():
             # adds interest amount in transaction history as well.
             user.account.balance += amount
             user.account.save()
-
 @shared_task
 def send_mail_task(user):
     email = user
