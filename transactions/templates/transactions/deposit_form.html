@@ -4,14 +4,68 @@
 
 {% block content %}
 {% include "home/messages.html" %}
-<div class="alert alert-info" role="alert"><h4>Your Current Account Balance is ₹ {{ request.user.balance }}</h4></div>
-<h2>Deposit Amount</h2><hr>
-    <form method="POST" action="" >
-        {% csrf_token %}
-        {{ form|crispy }}
-        <br>
-        <input class="btn btn-primary" type="submit" value='Deposit'>
-
-    </form>
+<!--<div class="alert alert-info" role="alert"><h4>Your Current Account Balance is ₹ {{ request.user.balance }}</h4></div>-->
+<h2>Deposit Amount</h2>
+<hr>
+<form method="POST" id="mappingForm" action="">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <br>
+    <input class="btn btn-primary" type="button" id="id_deposit" value='Deposit'>
+    <br>
+    <div class="form-group" id="id_otp" style="display:none">
+        <br/>
+        <label for="otp">Enter Sent OTP on Email</label>
+        <input type="number" class="form-control" name="otp" id="otp" placeholder="Enter otp">
+        <small id="otpHelp" class="form-text text-muted">We'll never share your otp with anyone else.</small>
+        <button type="button" id="id_submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
 {% endblock content %}
 
+{% block script_content %}
+<script>
+    $("#id_deposit").on('click', function () {
+        let amount = $("#id_amount").val();
+        // let otp = $(".otp_wrapper")
+        if (amount < 10) {
+            alert("You cannot withdraw amount less than 10.")
+        } else {
+            $.ajax({
+                url: '{% url "transactions:send_otp" %}',
+                method: "GET",
+                data: {
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function (status) {
+                    // console.log(status)
+                }
+            });
+            $("#id_otp").css("display", "block")
+        }
+    });
+    $("#id_submit").on('click', function () {
+        let otp = $("#otp").val();
+        if (otp == null) {
+            alert("Please Enter OTP First.")
+        } else {
+            $.ajax({
+                url: '{% url "transactions:check_otp" %}',
+                method: "GET",
+                data: {
+                    'otp': otp,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function (status) {
+                    console.log(status)
+                    if (status == '1') {
+                        document.getElementById("mappingForm").submit();
+                    } else {
+                        alert("OTP is not matching! Please Enter Correct OTP")
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock script_content %}

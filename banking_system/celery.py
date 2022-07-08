@@ -20,11 +20,12 @@ app.autodiscover_tasks()
 #celery beat is a scheduler; It kicks off tasks at regular intervals.
 app.conf.beat_schedule = {
     # Executes 1st day of every Month.
-    'every-month': {
+    'every-minute': {
         'task': 'tasks.count',
         # crontab can be changes to change Schedule
         # http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html
-        'schedule': crontab(0, 0, day_of_month='1'),
+        # 'schedule': crontab(0, 0, day_of_month='1'),
+        'schedule': crontab(minute='1'),
     },
 }
 @app.task(bind=True)

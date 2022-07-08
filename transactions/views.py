@@ -3,7 +3,6 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.core.paginator import Paginator
-from django.views.generic import CreateView
 from .forms import DepositForm, WithdrawalForm
 from .models import WithdrawalOtp, PayeeDetails
 from accounts.models import AccountDetails
@@ -13,6 +12,7 @@ from django.db.models import Sum
 from itertools import chain
 from transactions.models import Deposit, Withdrawal, Interest
 
+
 class DepositView(View):
     def get(self, request):
         form = DepositForm()
@@ -20,65 +20,54 @@ class DepositView(View):
 
     def post(self, request):
         form = DepositForm(request.POST or None)
-        # print(request.POST)
         if form.is_valid():
             deposit = form.save(commit=False)
             deposit.user = request.user
-            # print(request.user)
             deposit.save()
-            # adds users deposit to balance.
             deposit.user.account.balance += deposit.amount
             deposit.user.account.save()
             messages.success(request, 'You Have Deposited ₹ {}.'.format(deposit.amount))
             return redirect("user_profile")
         return render(request, 'transactions/deposit_form.html', {'form': form})
 
-
 class WithdrawalView(View):
     def get(self, request):
         form = WithdrawalForm()
-        # print("GET REQ", request.user)
         return render(request, "transactions/withdraw_form.html", {"form": form})
+
+    def post(self, request):
+        form = WithdrawalForm(request.POST or None, user=request.user)
+        if form.is_valid():
+            withdrawal = form.save(commit=False)
+            withdrawal.user = request.user
+            withdrawal.save()
+            # subtracting users withdrawal from balance.
+            withdrawal.user.account.balance -= withdrawal.amount
+            withdrawal.user.account.save()
+            messages.success(request, 'You Have Withdrawn ₹ {}.'.format(withdrawal.amount))
+            return redirect("user_profile")
+        else:
+            return render(request, 'transactions/withdraw_form.html', {'form': form})
 
 
 class SendOtpView(View):
-    def post(self, request):
-        # form = WithdrawalForm(request.POST or None, user=request.user)
-        # send_otp = sendOtp(request.user)
+    def get(self, request):
         send_otp = send_mail_task(request.user)
-        # # print("REQ", request)
-        # print("OTP", send_otp)
-        # # print("USER", request.user)
-        # print("AMOUNT", request.POST.get('amount'))
-        # print(form.is_valid())
-        # if form.is_valid():
-        user_id = request.POST.get('user_id')
-        otp_obj, created = WithdrawalOtp.objects.get_or_create(user_id=user_id)
+        otp_obj, created = WithdrawalOtp.objects.get_or_create(user_id=request.user.id)
         otp_obj.otp = send_otp
-        otp_obj.save()
-        return HttpResponse('success')
+        ack = otp_obj.save()
+        if ack == None:
+            return HttpResponse('1')
+        else:
+            return HttpResponse('0')
 
-class WithdrawalOtpAuthView(View):
-    def post(self, request):
-        form = WithdrawalForm(request.POST or None, user=request.user)
+class CheckOtpView(View):
+    def get(self, request):
         send_otp = WithdrawalOtp.objects.filter(user_id=request.user.id)
-        if send_otp[0].otp == int(request.POST.get('otp')):
-            if form.is_valid():
-                withdrawal = form.save(commit=False)
-                withdrawal.user = request.user
-                withdrawal.save()
-                # subtracting users withdrawal from balance.
-                withdrawal.user.account.balance -= withdrawal.amount
-                withdrawal.user.account.save()
-                messages.success(
-                    request, 'You Have Withdrawn ₹ {}.'.format(withdrawal.amount)
-                )
-                return redirect("user_profile")
-
-            return render(request, 'transactions/withdraw_form.html', {'form': form})
-
-        messages.error(request, 'Sorry! Your OTP is not Matching with Send OTP on Email! Try Again!')
-        return redirect("user_profile")
+        if send_otp[0].otp == int(request.GET.get('otp')):
+            return HttpResponse('1')
+        else:
+            return HttpResponse('0')
 
 class TransactionsView(View):
     def get(self, request):
@@ -102,6 +91,7 @@ class TransactionsView(View):
             }
             return render(request, "transactions/account_transaction.html", context)
 
+
 class InterestView(View):
     def get(self, request):
         if not request.user.is_authenticated:
@@ -118,26 +108,32 @@ class InterestView(View):
             return render(request, "transactions/account_interest.html", context)
 
 
-class MoneyTransferView(CreateView):
+class MoneyTransferView(View):
     def get(self, request):
         payee_list = PayeeDetails.objects.all().exclude(payee_account=request.user.account.account_no)
         return render(request, 'money_transfer/money_transfer_form.html', {'payee_list': payee_list})
 
-    def post(self, request, *args, **kwargs):
-        pd_obj = PayeeDetails.objects.get(id=request.POST.get('payee_id'))
-        payee_account = pd_obj.payee_account
-        pad_obj = AccountDetails.objects.get(account_no=payee_account)
-        ad_obj = AccountDetails.objects.get(user_id=request.user.id)
-        payer_bal = ad_obj.balance
+    def post(self, request):
+        payee_details = PayeeDetails.objects.get(id=request.POST.get('payee_id'))
+        # from Selected payee_id, i got payee's bank account.
+        payee = AccountDetails.objects.get(account_no=payee_details.payee_account)
+        # from payee's bank account i got his/her balance by obj payee obj
+        payer = AccountDetails.objects.get(account_no=request.user.account.account_no)
+        # Creating Payer obj for manipulation balance. like subtract amt..
         if request.POST.get('mode') == '1':
+            #mode 1 is IMPS and mode 2 is NEFT
             send_amt = float(request.POST.get('send_amt'))
-            if float(send_amt + send_amt * 0.10) <= float(payer_bal):
-                ad_obj.balance -= int(
+            if float(send_amt + send_amt * 0.10) <= float(payer.balance):
+                payer.balance -= int(
                     float(request.POST.get('send_amt')) + float(float(request.POST.get('send_amt')) * 0.10))
-                ad_obj.save()
-                pad_obj.balance += int(request.POST.get('send_amt'))
-                pad_obj.save()
-                messages.success(request, f'Money Transferred Successfully to Account no {payee_account}')
+                payer.save()
+                payee.balance += int(request.POST.get('send_amt'))
+                payee.save()
+                payer_withdrawal = Withdrawal(amount=send_amt, user_id=request.user.id)
+                payer_withdrawal.save()
+                payee_withdrawal = Deposit(amount=send_amt, user_id=payee_details.user_id)
+                payee_withdrawal.save()
+                messages.success(request, f'Amount ₹ {send_amt} Successfully transfered to Account no {payee_details.payee_account}')
                 return redirect("user_profile")
             else:
                 messages.error(request, 'Sorry, Your Account have not sufficient balance to transfer of this amount')
@@ -145,19 +141,24 @@ class MoneyTransferView(CreateView):
 
         elif request.POST.get('mode') == '2':
             send_amt = float(request.POST.get('send_amt'))
-            if float(send_amt + send_amt * 0.05) <= float(payer_bal):
-                ad_obj.balance -= int(
+
+            if float(send_amt + send_amt * 0.05) <= float(payer.balance):
+                payer.balance -= int(
                     float(request.POST.get('send_amt')) + float(float(request.POST.get('send_amt')) * 0.05))
-                ad_obj.save()
-                pad_obj.balance += int(request.POST.get('send_amt'))
-                pad_obj.save()
-                messages.success(request, f'Money Transferred Successfully to Account no {payee_account} ')
+                payer.save()
+                payee.balance += int(request.POST.get('send_amt'))
+                payee.save()
+                payer_withdrawal = Withdrawal(amount=send_amt, user_id=request.user.id)
+                payer_withdrawal.save()
+                payee_withdrawal = Deposit(amount=send_amt, user_id=payee_details.user_id)
+                payee_withdrawal.save()
+                messages.success(request, f'Amount ₹ {send_amt} Successfully transfered to Account no {payee_details.payee_account} ')
                 return redirect("user_profile")
             else:
                 messages.error(request, 'Sorry, Your Account have not sufficient balance to transfer of this amount')
                 return redirect("user_profile")
 
-class AddPayeeView(CreateView):
+class AddPayeeView(View):
     def get(self, request):
         payee_ac = PayeeDetails.objects.values('payee_account')
         account_list = AccountDetails.objects.values('id', 'account_no', 'ifsc_code')
@@ -174,4 +175,3 @@ class AddPayeeView(CreateView):
         PayeeDetails(payee_account=account_no, payee_ifsc=ifsc, user_id=user_id).save()
         messages.success(request, 'Payee details added successfully!')
         return render(request, 'money_transfer/money_transfer_form.html')
-
