@@ -15,7 +15,7 @@
     <div class="form-group" id="id_otp" style="display:none">
         <br/>
         <label for="otp">Enter Sent OTP on Email</label>
-        <input type="number" class="form-control" name="otp" id="otp" placeholder="Enter otp">
+        <input type="text" class="form-control" name="otp" id="otp" placeholder="Enter otp" required>
         <small id="otpHelp" class="form-text text-muted">We'll never share your otp with anyone else.</small>
         <button type="button" id="id_submit" class="btn btn-primary">Submit</button>
     </div>
@@ -45,7 +45,7 @@
     });
     $("#id_submit").on('click', function () {
         let otp = $("#otp").val();
-        if (otp == null || !otp.isInteger ) {
+        if (otp == null || isNaN(otp)) {
             alert("Otp must be positive number and not null .")
         } else {
             $.ajax({
