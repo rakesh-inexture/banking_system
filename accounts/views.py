@@ -119,7 +119,6 @@ class UserAccountUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView)
     model = AccountDetails
     success_message = f'Account Details Updated Successfully!'
     fields = [
-        'branch_name',
         'account_type',
         'gender',
         'birth_date',
@@ -133,6 +132,7 @@ class UserAddressUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView)
     fields = [
         'state',
         'district',
+        'branch_name',
         'street_address',
         'postal_code',
     ]
