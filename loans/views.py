@@ -1,7 +1,5 @@
-from django.http import HttpResponse
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from accounts.models import AccountDetails
 from .forms import LoanApplyForm
 from .models import LoanDetails
 from django.views import View
@@ -26,20 +24,25 @@ class ApplyLoan(View):
 
             obj = LoanDetails(loan_type=loan_type, loan_duration=loan_duration, rate_of_interest=rate_of_interest, user_id=request.user.id)
             obj.save()
-            messages.success(request, 'Successfully Applied for a loan')
+            messages.success(request, 'You Successfully Applied for a loan wait for approval')
             return redirect("user_profile")
         else:
-            messages.error(request, 'Sorry! You have already Applied for a loan')
+            messages.warning(request, 'Sorry! You have already Applied for a loan')
             return redirect("user_profile")
 
 class LoanStatus(View):
     def get(self, request):
-        user_rcd = LoanDetails.objects.get(user_id=request.user.id)
-        if user_rcd.loan_status == True:
-            messages.success(request, 'Congratulations, Your Loan has been approved by Bank! for further processs plz contact to Bank')
-            return redirect("user_profile")
+        check_user = LoanDetails.objects.filter(user_id=request.user.id).exists()
+        if check_user:
+            user_rcd = LoanDetails.objects.get(user_id=request.user.id)
+            if user_rcd.loan_status == True:
+                messages.success(request, 'Congratulations, Your Loan has been approved by Bank! for further processs plz contact to Bank')
+                return redirect("user_profile")
+            else:
+                messages.info(request, 'Sorry! You Loan status is pending till now.')
+                return redirect("user_profile")
         else:
-            messages.error(request, 'Sorry! You Loan status is pending till now.')
-            return redirect("user_profile")
+            messages.info(request, 'Sorry! You have not applied for loan till now!')
+            return redirect("loans:loan_form")
 
 

@@ -161,6 +161,8 @@ AUTHENTICATION_BACKENDS = (
 MESSAGE_TAGS = {
     messages.SUCCESS: 'alert-success',
     messages.ERROR: 'alert-danger',
+    messages.WARNING: 'alert-warning',
+    messages.INFO: 'alert-info',
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
