@@ -3,11 +3,11 @@ from .models import Deposit, Withdrawal, WithdrawalOtp, Interest
 
 @admin.register(Deposit)
 class DepositModelAdmin(admin.ModelAdmin):
-    list_display = ['id', 'amount', 'timestamp', 'user']
+    list_display = ['id', 'amount', 'status', 'timestamp', 'user']
 
 @admin.register(Withdrawal)
 class WithdrawalModelAdmin(admin.ModelAdmin):
-    list_display = ['id', 'amount', 'timestamp', 'user']
+    list_display = ['id', 'amount', 'status', 'timestamp', 'user']
 
 @admin.register(WithdrawalOtp)
 class WithrawalOtpModelAdmin(admin.ModelAdmin):

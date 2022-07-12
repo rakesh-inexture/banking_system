@@ -56,13 +56,8 @@ class AccountDetails(models.Model):
         ("C", "Current"),
         ("S", "Saving"),
     )
-    BRANCH_CHOICE = (
-        ("SHI", "Shivranjani"),
-        ("ISK", "Iskon"),
-        ("SCI", "Science City")
-    )
-    user = models.OneToOneField(User, related_name='account', on_delete=models.CASCADE)
 
+    user = models.OneToOneField(User, related_name='account', on_delete=models.CASCADE)
     account_no = models.PositiveIntegerField(
         unique=True,
         validators=[
@@ -74,7 +69,6 @@ class AccountDetails(models.Model):
     # account_no = models.CharField(int(hexstr, 16),)
 
     gender = models.CharField(max_length=1, choices=GENDER_CHOICE)
-    branch_name = models.CharField(max_length=3, choices=BRANCH_CHOICE)
     ifsc_code = models.CharField(max_length=30, default='RK012345')
     account_type = models.CharField(max_length=1, null=False, blank=False, choices=ACCOUNT_CHOICE)
     birth_date = models.DateField(null=True, blank=True, help_text="Date format must be YYYY-MM-DD")
@@ -95,18 +89,24 @@ class AccountDetails(models.Model):
 
 
 class State(models.Model):
-    name = models.CharField(max_length=50)
+    state_name = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.name
+        return self.state_name
 
 class District(models.Model):
     state = models.ForeignKey(State, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
+    district_name = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.name
+        return self.district_name
 
+class Branch(models.Model):
+    district = models.ForeignKey(District, on_delete=models.CASCADE)
+    branch_name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.branch_name
 
 
 class UserAddress(models.Model):
@@ -119,6 +119,7 @@ class UserAddress(models.Model):
     postal_code = models.CharField(max_length=6)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True)
     district = models.ForeignKey(District, on_delete=models.SET_NULL, null=True)
+    branch_name = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return self.user.email

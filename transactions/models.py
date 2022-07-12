@@ -4,8 +4,6 @@ from django.conf import settings
 from django.core.validators import MinValueValidator
 
 User = settings.AUTH_USER_MODEL
-
-
 class Deposit(models.Model):
     user = models.ForeignKey(
         User,
@@ -24,7 +22,7 @@ class Deposit(models.Model):
     status = models.CharField(default="credited", max_length=10)
 
     def __str__(self):
-        return  f"{str(self.user)}: {self.amount}"
+        return f"{str(self.user)}: {self.amount}"
 
 
 class Withdrawal(models.Model):

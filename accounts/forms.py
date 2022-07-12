@@ -20,7 +20,6 @@ class AccountDetailsForm(forms.ModelForm):
     class Meta:
         model = AccountDetails
         fields = [
-            'branch_name',
             'account_type',
             'gender',
             'birth_date',
@@ -31,23 +30,24 @@ class UserAddressForm(forms.ModelForm):
     class Meta:
         model = UserAddress
         fields = [
-            'state',
-            'district',
             'street_address',
             'postal_code',
+            'state',
+            'district',
+            'branch_name',
         ]
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             self.fields['district'].queryset = District.objects.none()
 
-            # if 'state' in self.data:
-            #     try:
-            #         state_id = int(self.data.get('state'))
-            #         self.fields['districts'].queryset = District.objects.filter(state_id=state_id).order_by('name')
-            #     except (ValueError, TypeError):
-            #         pass  # invalid input from the client; ignore and fallback to empty City queryset
-            # elif self.instance.pk:
-            #     self.fields['district'].queryset = self.instance.state.district_set.order_by('name')
+            if 'state' in self.data:
+                try:
+                    state_id = int(self.data.get('state'))
+                    self.fields['districts'].queryset = District.objects.filter(state_id=state_id).order_by('name')
+                except (ValueError, TypeError):
+                    pass  # invalid input from the client; ignore and fallback to empty City queryset
+            elif self.instance.pk:
+                self.fields['district'].queryset = self.instance.state.district_set.order_by('name')
 
 class UserLoginForm(forms.Form):
     account_no = forms.IntegerField(label="Account Number")

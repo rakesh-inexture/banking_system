@@ -1,0 +1,55 @@
+{% extends "home/base.html" %}
+{% load crispy_forms_tags %}
+{% block title %} {{ title }} | {{ block.super }}{% endblock title %}
+
+{% block content %}
+{% include "home/messages.html" %}
+<h2>Apply for Loan</h2>
+<hr>
+    <div class="form-group">
+        <br/>
+        <table>
+            <style>
+                table, th, td {
+                    border: 1px solid black;
+                    border-collapse: collapse;
+                }
+            </style>
+            <h5>Some details related to Loans</h5>
+            <tr>
+                <th>Loan Type</th>
+                <th>Loan % Per Year</th>
+            </tr>
+            <tr>
+                <td>Home Loan</td>
+                <td>8%</td>
+            </tr>
+            <tr>
+                <td>Education Loan</td>
+                <td>6%</td>
+            </tr>
+            <tr>
+                <td>Car Loan</td>
+                <td>9%</td>
+            </tr>
+            <tr>
+                <td>Property Loan</td>
+                <td>8%</td>
+            </tr>
+        </table>
+        <br>
+    </div>
+<form method="POST" action="">
+    {% csrf_token %}
+    {{ form|crispy }}
+
+    <br>
+    <input class="btn btn-primary" type="submit" id="submit"  value='Submit'>
+    <div class="border-top pt-3">
+        <small class="text-muted ml-2">
+            <b>If already applied? Check your loan status </b><a class="ml-2" href="{% url 'loans:loan_status' %}">Click here</a>
+        </small>
+    </div>
+</form>
+{% endblock content %}
+

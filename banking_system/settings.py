@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'accounts',
     'transactions',
     'django_celery_beat',
+    'loans'
 
 ]
 

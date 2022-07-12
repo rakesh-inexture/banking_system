@@ -12,9 +12,10 @@
                  <th>Select Payee Accounts  and IFSC code : </th>
                  <td>
                      <select id="list_id" name="ac_id" class="payee-dropdown" style="width:500px;">
-                        {% for al in account_list %}
+                         <option value="" selected="">---------</option>
+                         {% for al in account_list %}
                          <option value="{{ al.id }}" name="val_details">Account_No:- {{ al.account_no }} IFSC: - {{ al.ifsc_code }}</option>
-                        {% endfor %}
+                         {% endfor %}
                      </select>
                  </td>
               </tr>

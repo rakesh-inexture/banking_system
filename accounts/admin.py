@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, AccountDetails, UserAddress,State, District
+from .models import User, AccountDetails, UserAddress, State, District
 
 @admin.register(User)
 class UserModelAdmin(admin.ModelAdmin):
@@ -13,7 +13,6 @@ class UserModelAdmin(admin.ModelAdmin):
 @admin.register(AccountDetails)
 class AccountModelAdmin(admin.ModelAdmin):
     list_display = [
-            'branch_name',
             'account_type',
             'gender',
             'birth_date',
@@ -31,9 +30,9 @@ class AddressModelAdmin(admin.ModelAdmin):
 
 @admin.register(State)
 class StateModelAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name']
+    list_display = ['id', 'state_name']
 
 @admin.register(District)
 class DistrictModelAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'state_id']
+    list_display = ['id', 'district_name', 'state_id']
 

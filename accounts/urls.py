@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterView, LoginView, UserUpdateView, UserAccountUpdateView, UserAddressUpdateView, LoadDistricts, ProfileView
+from .views import RegisterView, LoginView, UserUpdateView, UserAccountUpdateView, UserAddressUpdateView, ProfileView, LoadDistrictsView, LoadBranchView
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 
@@ -11,7 +11,8 @@ urlpatterns = [
     path('user_update/<int:pk>/', UserUpdateView.as_view(), name='user_update'),
     path('account_update/<int:pk>/', UserAccountUpdateView.as_view(), name='account_update'),
     path('address_update/<int:pk>/', UserAddressUpdateView.as_view(), name='address_update'),
-    path('ajax/load-districts/', LoadDistricts.as_view(), name='ajax_load_districts'),
+    path('load_districts/', LoadDistrictsView.as_view(), name='load_districts'),
+    path('load_branches/', LoadBranchView.as_view(), name='load_branches'),
 
     path('password-reset/',
          auth_views.PasswordResetView.as_view(

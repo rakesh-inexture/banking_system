@@ -8,7 +8,7 @@ from django.views import View
 from django.views.generic.edit import UpdateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import User, District, AccountDetails, UserAddress
+from .models import User, District, Branch, AccountDetails, UserAddress
 
 class RegisterView(View):
     def get(self, request):
@@ -62,16 +62,19 @@ class RegisterView(View):
         }
         return render(request, "accounts/register_form.html", context)
 
-class LoadDistricts(View):
+class LoadDistrictsView(View):
     def get(self, request):
-        state_id = request.GET.get('state')
-        # print("Request", request)
-        # print("State_Id", state_id)
-        districts = District.objects.filter(state_id=state_id).order_by('name')
-        # print("Districts", districts)
-        # filtered_districts = dict()
-        filtered_districts = {district.id: district.name for district in districts}
+        state_id = request.GET.get('state_id')
+        districts = District.objects.filter(state_id=state_id).order_by('district_name')
+        filtered_districts = {district.id: district.district_name for district in districts}
         return HttpResponse(json.dumps(filtered_districts))
+
+class LoadBranchView(View):
+    def get(self, request):
+        district_id = request.GET.get('district_id')
+        branches = Branch.objects.filter(district_id=district_id).order_by('branch_name')
+        filtered_branches = {branch.id: branch.branch_name for branch in branches}
+        return HttpResponse(json.dumps(filtered_branches))
 
 class LoginView(View):
     def get(self, request):

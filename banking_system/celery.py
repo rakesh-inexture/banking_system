@@ -21,14 +21,14 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     # Executes 1st day of every Month.
     'every-minute': {
-        'task': 'tasks.count',
+        'task': 'count_interest',
         # crontab can be changes to change Schedule
         # http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html
         # 'schedule': crontab(0, 0, day_of_month='1'),
         'schedule': crontab(minute='1'),
-    },
+    }
 }
 @app.task(bind=True)
 def debug_task(self):
-    print(f"Request: {self.request!r}")
-    # print('Request: {0!r}'.format(self.request))
+    # print(f"Request: {self.request!r}")
+    print('Request: {0!r}'.format(self.request))
