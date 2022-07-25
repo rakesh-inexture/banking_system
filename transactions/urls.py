@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import DepositView, WithdrawalView, SendOtpView, CheckOtpView, TransactionsView, InterestView, MoneyTransferView, AddPayeeView
+from .views import DepositView, WithdrawalView, SendOtpView, CheckOtpView, TransactionsView, InterestView, \
+    MoneyTransferView, AddPayeeView
 from django.contrib.auth.decorators import login_required
 
 app_name = 'transactions'

@@ -1,8 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-# import secrets
-# from secrets import SystemRandom
+from .managers import UserManager
+
 
 class User(AbstractUser):
     username = models.CharField(max_length=50)
@@ -10,20 +10,28 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
     contact_no = models.CharField(max_length=12, unique=True, null=True)
+
+    objects = UserManager()
+
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email
 
-    @property
     # It is a built-in decorator it  help in defining the properties effortlessly without manually calling the inbuilt function property().
     # It return the property attributes of a class from the stated getter, setter and deleter as parameters.
-
+    @property
     def account_no(self):
         if hasattr(self, 'account'):
             # here hasattr() checking for the existence of an attribute, if TRUE then returning it.
             return self.account.account_no
+        return None
+
+    def address(self):
+        if hasattr(self, 'address'):
+            # here hasattr() checking for the existence of an attribute, if TRUE then returning it.
+            return self.address
         return None
 
     @property
@@ -46,6 +54,7 @@ class User(AbstractUser):
                 self.address.state,
             )
         return None
+
 
 class AccountDetails(models.Model):
     GENDER_CHOICE = (
@@ -70,19 +79,10 @@ class AccountDetails(models.Model):
 
     gender = models.CharField(max_length=1, choices=GENDER_CHOICE)
     ifsc_code = models.CharField(max_length=30, default='RK012345')
-    account_type = models.CharField(max_length=1, null=False, blank=False, choices=ACCOUNT_CHOICE)
-    birth_date = models.DateField(null=True, blank=True, help_text="Date format must be YYYY-MM-DD")
-    balance = models.DecimalField(
-        default=1000,
-        max_digits=12,
-        decimal_places=2
-    )
-    picture = models.ImageField(
-        null=False,
-        blank=False,
-        upload_to='profile/',
-        default='profile/dummy-image.jpg'
-    )
+    account_type = models.CharField(max_length=1, choices=ACCOUNT_CHOICE)
+    birth_date = models.DateField(help_text="Date format must be YYYY-MM-DD")
+    balance = models.DecimalField(default=1000, max_digits=12, decimal_places=2)
+    picture = models.ImageField(null=True, blank=True, upload_to='profile/', default='profile/dummy-image.jpg')
 
     def __str__(self):
         return str(self.account_no)
@@ -94,12 +94,14 @@ class State(models.Model):
     def __str__(self):
         return self.state_name
 
+
 class District(models.Model):
     state = models.ForeignKey(State, on_delete=models.CASCADE)
     district_name = models.CharField(max_length=50)
 
     def __str__(self):
         return self.district_name
+
 
 class Branch(models.Model):
     district = models.ForeignKey(District, on_delete=models.CASCADE)
@@ -109,12 +111,8 @@ class Branch(models.Model):
         return self.branch_name
 
 
-class UserAddress(models.Model):
-    user = models.OneToOneField(
-        User,
-        related_name='address',
-        on_delete=models.CASCADE,
-    )
+class AddressDetails(models.Model):
+    user = models.OneToOneField(User, related_name='address', on_delete=models.CASCADE)
     street_address = models.CharField(max_length=512)
     postal_code = models.CharField(max_length=6)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True)
@@ -122,4 +120,4 @@ class UserAddress(models.Model):
     branch_name = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return self.user.email
+        return self.id

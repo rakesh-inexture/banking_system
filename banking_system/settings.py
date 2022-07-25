@@ -9,13 +9,13 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
 from pathlib import Path
-import os
-from dotenv import load_dotenv
-load_dotenv()
-
 from django.contrib import messages
+import os
+from celery.schedules import crontab
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,7 +31,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['rk-banking-system.herokuapp.com', '127.0.0.1']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,11 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_beat',
     'crispy_forms',
     'home',
     'accounts',
     'transactions',
-    'django_celery_beat',
     'loans'
 
 ]
@@ -83,7 +82,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'banking_system.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
@@ -134,7 +132,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
@@ -155,7 +152,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'accounts.backends.AccountNoBackend',
+    'accounts.backends.MyBackend',
 )
 
 MESSAGE_TAGS = {
@@ -164,7 +161,7 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.INFO: 'alert-info',
 }
-
+# Setup for Send mail.
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -172,17 +169,25 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASS')
 
-CELERY_BROKER_URL = ' redis://localhost:6379//'
-CELERY_RESULT_BACKEND = ' redis://localhost:6379//'
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
+# CELERY_ENABLE_UTC = False
+
 CELERY_BEAT_SCHEDULE = {
     'count_interest': {
         'task': 'count_interest',
-        'schedule': 1
-    }
+        'schedule': crontab(0, 0, day_of_month='1'),  # Execute 1st day of every month.
+        # 'schedule': crontab(hour=0, minute=1), # Execute every minute mid-night at 00:01.
+        # 'schedule': crontab(), # Execute every minute.
+    },
+    'count_loan_interest': {
+        'task': 'count_loan_interest',
+        'schedule': crontab(0, 0, day_of_month='1'),  # Execute 1st day of every month
+        # 'schedule': crontab(hour=0, minute=1), # Execute every minute mid-night at 00:01.
+        # 'schedule': crontab(), # Execute every minute.
+    },
 }
-
-

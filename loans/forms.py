@@ -1,7 +1,7 @@
 from django import forms
-from .models import LoanDetails
+from .models import LoanDetails, InterestRate
 
-class LoanApplyForm(forms.ModelForm):
+class LoanDurationForm(forms.ModelForm):
     class Meta:
         model = LoanDetails
-        fields = ['loan_duration', 'loan_type']
+        fields = ['loan_amount', 'loan_duration']

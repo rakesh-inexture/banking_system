@@ -57,8 +57,7 @@
                     csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
                 },
                 success: function (status) {
-                    console.log(status)
-                    if (status == '1') {
+                    if (status['status']==1) {
                         document.getElementById("mappingForm").submit();
                     } else {
                         alert("OTP is not matching! Please Enter Correct OTP")

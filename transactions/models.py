@@ -4,6 +4,8 @@ from django.conf import settings
 from django.core.validators import MinValueValidator
 
 User = settings.AUTH_USER_MODEL
+
+
 class Deposit(models.Model):
     user = models.ForeignKey(
         User,
@@ -19,7 +21,7 @@ class Deposit(models.Model):
     )
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    status = models.CharField(default="credited", max_length=10)
+    status = models.CharField(default="credited", max_length=40)
 
     def __str__(self):
         return f"{str(self.user)}: {self.amount}"
@@ -40,7 +42,7 @@ class Withdrawal(models.Model):
     )
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    status = models.CharField(default="debited", max_length=10)
+    status = models.CharField(default="debited", max_length=40)
 
     def __str__(self):
         return f"{str(self.user)}: {self.amount}"
@@ -69,6 +71,7 @@ class Interest(models.Model):
         max_digits=12,
     )
     timestamp = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(default="Interest Credited", max_length=40)
 
     def __str__(self):
         return str(self.user)

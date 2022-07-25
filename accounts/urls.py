@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import RegisterView, LoginView, UserUpdateView, UserAccountUpdateView, UserAddressUpdateView, ProfileView, LoadDistrictsView, LoadBranchView
+from .views import RegisterView, LoginView, UserUpdateView, UserAccountUpdateView, UserAddressUpdateView, ProfileView, \
+    LoadDistrictsView, LoadBranchView
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 

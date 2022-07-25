@@ -25,14 +25,12 @@
      $("#id_state").change(function () {
         let state_id = $(this).val();  // get the selected state ID from the HTML input
         $.ajax({                       // initialize an AJAX request
-            url: '{% url "load_districts" %}',  // set the url of the request (= localhost:8000/accounts/ajax/load-districts/)
+            url: '{% url "load_districts" %}',  // set the url of the request (= localhost:8000/account/ajax/load-districts/)
             method:"GET",
             data: {
                 'state_id': state_id       // add the state id to the GET parameters
             },
-            success: function (data) {   // `data` is the return of the `load_districts` view function
-                let district_list = JSON.parse(data);
-                // console.log(res_data);
+            success: function (district_list) {   // `data` is the return of the `load_districts` view function
                 $('#id_district').empty();
                 $.each(district_list, function(key, value) {
                     $('#id_district')
@@ -48,14 +46,12 @@
       $("#id_district").change(function () {
         let district_id = $(this).val();  // get the selected state ID from the HTML input
         $.ajax({                       // initialize an AJAX request
-            url: '{% url "load_branches" %}',  // set the url of the request (= localhost:8000/accounts/ajax/load-districts/)
+            url: '{% url "load_branches" %}',  // set the url of the request (= localhost:8000/account/ajax/load-districts/)
             method:"GET",
             data: {
                 'district_id': district_id       // add the state id to the GET parameters
             },
-            success: function (data) {   // `data` is the return of the `load_districts` view function
-                let branch_list = JSON.parse(data);
-                // console.log(res_data);
+            success: function (branch_list) {   // `data` is the return of the `load_districts` view function
                 $('#id_branch_name').empty();
                 $.each(branch_list, function(key, value) {
                     $('#id_branch_name')

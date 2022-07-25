@@ -6,34 +6,36 @@
 {% include "home/messages.html" %}
 
 <div class="page-header">
-  <h3 class="text-center">RK Bank</h3>
+    <h3 class="text-center">RK Bank</h3>
 </div>
 
 <div class="row">
-  <div class="col-xs-12 col-md-8 text-left">
-      <p><img src="{{ user.account.picture.url }}" alt="Profile Picture" width="100" height="100" class=""rounded-circle article-img></p>
-      <h4><b>Account Name: </b>{{ user.full_name }}</h4>
-      <h4><b>Contact No: </b>{{ user.contact_no }}</h4>
-      <h4><b>Email Address: </b>{{ user.email }} </h4>
-      <h4><b>Date of Birth: </b>{{ user.account.birth_date }}</h4>
-      <h4><b>Gender: </b>{{ user.account.get_gender_display }}</h4>
-      <h4><b>Address: </b>{{ user.full_address }}</h4>
-      <a class="btn btn-primary" href="{% url 'user_update' user.id %}">Edit User details</a>
-      <a class="btn btn-primary" href="{% url 'account_update' user.account.id %}">Edit User Account details</a>
-      <a class="btn btn-primary" href="{% url 'address_update' user.address.id %}">Edit User Address details</a>
-  </div>
-  <div class="col-xs-6 col-md-4 text-left">
-    <h4><b>Account Created: </b>{{ user.date_joined|date:'d-m-Y' }}</h4>
-      <h4><b>Account Type: </b>{{ user.account.get_account_type_display }}</h4>
-      <h4><b>Branch Name: </b>{{ user.account.get_branch_name_display }}</h4>
+    <div class="col-xs-12 col-md-8 text-left">
+        <p><img src="{{ user.account.picture.url }}" alt="Profile Picture" width="100" height="100" class=""
+                rounded-circle article-img></p>
+        <h4><b>Account Name: </b>{{ user.full_name }}</h4>
+        <h4><b>Contact No: </b>{{ user.contact_no }}</h4>
+        <h4><b>Email Address: </b>{{ user.email }} </h4>
+        <h4><b>Date of Birth: </b>{{ user.account.birth_date }}</h4>
+        <h4><b>Gender: </b>{{ user.account.get_gender_display }}</h4>
+        <h4><b>Address: </b>{{ user.full_address }}</h4>
+        <a class="btn btn-primary" href="{% url 'user_update' user.id %}">Edit User details</a>
+        <a class="btn btn-primary" href="{% url 'account_update' user.account.id %}">Edit User Account details</a>
 
-    <h4><b>Account No: </b>{{ user.account_no }}</h4><br><br>
-    <div class="well">
-    <h4 class="card"><b>Account Balance: </b>₹{{ user.balance }}</h4>
-    <a class="btn btn-success" href="{% url 'transactions:deposit' %}">Deposit</a>
-    <a class="btn btn-danger" href="{% url 'transactions:withdrawal' %}">Withdraw</a>
+
     </div>
-  </div>
+    <div class="col-xs-6 col-md-4 text-left">
+        <h4><b>Account Created: </b>{{ user.date_joined|date:'d-m-Y' }}</h4>
+        <h4><b>Account Type: </b>{{ user.account.get_account_type_display }}</h4>
+        <h4><b>Branch Name: </b>{{ user.account.get_branch_name_display }}</h4>
+
+        <h4><b>Account No: </b>{{ user.account_no }}</h4><br><br>
+        <div class="well">
+            <h4 class="card"><b>Account Balance: </b>₹{{ user.balance }}</h4>
+            <a class="btn btn-success" href="{% url 'transactions:deposit' %}">Deposit</a>
+            <a class="btn btn-danger" href="{% url 'transactions:withdrawal' %}">Withdraw</a>
+        </div>
+    </div>
 </div>
 <hr>
 {% endblock content %}

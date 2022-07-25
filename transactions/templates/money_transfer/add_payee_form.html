@@ -5,13 +5,13 @@
 {% block content %}
 {% include "home/messages.html" %}
 <h2>Add New Payee</h2><hr>
-    <form method="POST" action="" >
+    <form method="POST" action="" id="mappingForm"  >
         {% csrf_token %}
         <table>
               <tr>
                  <th>Select Payee Accounts  and IFSC code : </th>
                  <td>
-                     <select id="list_id" name="ac_id" class="payee-dropdown" style="width:500px;">
+                     <select id="ac_id" name="ac_id" class="payee-dropdown" style="width:500px;">
                          <option value="" selected="">---------</option>
                          {% for al in account_list %}
                          <option value="{{ al.id }}" name="val_details">Account_No:- {{ al.account_no }} IFSC: - {{ al.ifsc_code }}</option>
@@ -21,7 +21,7 @@
               </tr>
         </table>
         <br>
-        <input class="btn btn-primary" type="submit" value='Add'>
+        <input class="btn btn-primary" type="button" id="id_add" value='Add'>
         <div class="border-top pt-3">
                 <small class="text-muted ml-2">
                     <b>If Payee is Added already?</b><a class="ml-2" href="{% url 'transactions:money_transfer' %}">Click here</a>
@@ -29,3 +29,18 @@
         </div>
     </form>
 {% endblock content %}
+
+{% block script_content %}
+<script>
+    $("#id_add").on('click', function() {
+        let selected_id = $("#ac_id").val();
+        console.log(selected_id)
+        if (selected_id == "" || null ) {
+            alert("Please Select Payee First!")
+        }
+        else{
+            document.getElementById("mappingForm").submit();
+        }
+    });
+</script>
+{% endblock script_content %}
